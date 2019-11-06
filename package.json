@@ -1,0 +1,22 @@
+{
+  "name": "tradukkbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^3.0.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "emoji-text": "^0.2.6",
+    "express.js": "^1.0.0",
+    "fs": "0.0.1-security",
+    "google-tts-api": "0.0.4",
+    "node-telegram-bot-api": "^0.40.0",
+    "text-to-mp3": "^1.0.4"
+  }
+}
