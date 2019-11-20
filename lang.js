@@ -102,6 +102,9 @@ function languageConvert(emoji) {
     case "flag-us":
       language = "en";
       break;
+    default:
+      language = "error";
+      break;
   }
   return language;
 }

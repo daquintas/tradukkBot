@@ -8,6 +8,12 @@ const emojiText = require("emoji-text");
 const txtomp3 = require("text-to-mp3");
 const fs = require('fs');
 
+const flag_list = "🇩🇪🇵🇹🇫🇷🇪🇸🇺🇸🇳🇱🇬🇧🇷🇺🇨🇳🇯🇵🇮🇹🇹🇷🇬🇧🇦🇪🇵🇱\n\nNew languages coming soon 😊";
+const example = "🇪🇸 Hi everyone! My name is Tradukkbot. Nice to meet you.";
+const start = "Welcome to Tradukkbot 👋\nThis is the list of commands that you can use with me 😊\n\n/info - How Tradukkbot works?\n/languages - What languages does Tradukkbot support?"
+const how_works = "Send the flag emoji of the language you want to translate the text plus the text itself.\nRemember that for text to audio translation you can only use 200 characters.\n\nExample\n" + example;
+
+
 const app = express();
 const bot = new TelegramBot(process.env.BOT_TOKEN, {
   polling: true
@@ -17,17 +23,29 @@ bot.on("polling_error", (err) => console.log(err));
 
 app.use(bodyParser.json());
 
-bot.onText(/\/echo (.+)/, (msg, match) => {
-  const chatId = msg.chat.id;
-  const resp = match[1];
 
-  bot.sendMessage(chatId, resp);
+bot.onText(/\/start/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, start);
 });
 
-bot.on('message', (msg) => {
-  let chatId = msg.chat.id;
-  let text = msg.text;
+bot.onText(/\/info/, function(msg, match) {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, how_works);
+  bot.sendMessage(chatId, "That's what you will receive ⬇️");
+  sendMessage(chatId, example);
+});
 
+bot.onText(/\/languages/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, flag_list);
+});
+
+bot.onText(/\s/, function(msg, match) {
+  sendMessage(msg.chat.id, match.input);
+});
+
+function sendMessage(chatId, text) {
   let emoji = emojiText.convert(text.substr(0, 4), {
     before: '',
     after: ''
@@ -35,20 +53,24 @@ bot.on('message', (msg) => {
 
   let trad = text.substr(4, text.length);
 
-  translate(trad, {
-    to: language.languageConvert(emoji)
-  }).then(res => {
-    let name_mp3 = textToMp3(language.languageConvert(emoji), encodeURI(res.text), chatId.toString());
-    setTimeout(function() {
-      bot.sendMessage(chatId, res.text);
-      bot.sendAudio(chatId, name_mp3);
-    }, 1000);
-  });
-});
+  if (language.languageConvert(emoji) == "error") {
+    bot.sendMessage(chatId, "Sorry but I don't understand that language 😔");
+  } else {
+    translate(trad, {
+      to: language.languageConvert(emoji)
+    }).then(res => {
+      let name_mp3 = textToMp3(language.languageConvert(emoji), encodeURI(res.text), chatId.toString());
+      setTimeout(function() {
+        bot.sendMessage(chatId, res.text);
+        bot.sendAudio(chatId, name_mp3);
+      }, 1000);
+    });
+  }
+};
 
 function textToMp3(lang, text, chatId) {
   txtomp3.attributes.tl = lang;
-  let name = 'Tradukbot' + chatId + '.mp3';
+  let name = 'Tradukkbot' + chatId + '.mp3';
   let path = './' + name;
 
   fs.unlink(path, (err) => {
@@ -73,6 +95,16 @@ function textToMp3(lang, text, chatId) {
       console.log("Error", err);
     });
   return name;
+}
+
+function avalaibleLanguages(flags) {
+  for (let i = 0; i < flags.length; i++) {
+    flags[i] = emojiText.convert((flags[i]), {
+      before: '',
+      after: ''
+    });
+  }
+  return flags.toString().replace(",", " ");
 }
 
 app.listen(80, () => {
