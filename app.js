@@ -7,6 +7,7 @@ const language = require(__dirname + "/lang.js");
 const emojiText = require("emoji-text");
 const txtomp3 = require("text-to-mp3");
 const fs = require('fs');
+const http = require("http");
 
 const flag_list = "🇩🇪🇵🇹🇫🇷🇪🇸🇺🇸🇳🇱🇬🇧🇷🇺🇨🇳🇯🇵🇮🇹🇹🇷🇬🇧🇦🇪🇵🇱\n\nNew languages coming soon 😊";
 const example = "🇪🇸 Hi everyone! My name is Tradukkbot. Nice to meet you.";
@@ -22,6 +23,10 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, {
 bot.on("polling_error", (err) => console.log(err));
 
 app.use(bodyParser.json());
+
+setInterval(function() {
+  https.get("https://tradukkbot.herokuapp.com/");
+}, 300000);
 
 
 bot.onText(/\/start/, (msg, match) => {
@@ -107,6 +112,6 @@ function avalaibleLanguages(flags) {
   return flags.toString().replace(",", " ");
 }
 
-app.listen(80, () => {
-  console.log('Listening on port 80');
+app.listen(process.env.PORT, () => {
+  console.log('Listening on port' + process.env.PORT);
 });
