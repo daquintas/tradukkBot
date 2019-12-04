@@ -7,7 +7,7 @@ const language = require(__dirname + "/lang.js");
 const emojiText = require("emoji-text");
 const txtomp3 = require("text-to-mp3");
 const fs = require('fs');
-const http = require("http");
+const https = require("https");
 
 const flag_list = "🇩🇪🇵🇹🇫🇷🇪🇸🇺🇸🇳🇱🇬🇧🇷🇺🇨🇳🇯🇵🇮🇹🇹🇷🇬🇧🇦🇪🇵🇱\n\nNew languages coming soon 😊";
 const example = "🇪🇸 Hi everyone! My name is Tradukkbot. Nice to meet you.";
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 setInterval(function() {
   https.get("https://tradukkbot.herokuapp.com/");
-}, 300000);
+}, 20000);
 
 
 bot.onText(/\/start/, (msg, match) => {
